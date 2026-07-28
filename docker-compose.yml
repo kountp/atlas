@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: atlas-postgres
+    environment:
+      POSTGRES_DB: atlas
+      POSTGRES_USER: atlas
+      POSTGRES_PASSWORD: atlas_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - atlas_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U atlas -d atlas"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: src/Atlas.Api/Dockerfile
+    container_name: atlas-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=atlas;Username=atlas;Password=atlas_dev_password
+      Jwt__Key: CHANGE_THIS_DEVELOPMENT_KEY_TO_AT_LEAST_32_CHARACTERS
+      Jwt__Issuer: Atlas.Api
+      Jwt__Audience: Atlas.Clients
+    ports:
+      - "8080:8080"
+
+volumes:
+  atlas_pgdata:

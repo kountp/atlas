@@ -1,42 +1,55 @@
-# Atlas Starter v0.1
+# ATLAS v0.2
 
-Πρώτη λειτουργική βάση της Atlas.
+Working backend foundation for the ATLAS Field Service Management platform.
 
-## Περιλαμβάνει
+## Included
 
-- Visual Studio solution
-- Atlas.Domain
-- Atlas.Api
-- Swagger
-- Health check
-- Πρώτη οντότητα Company
-- Πρώτο endpoint δημιουργίας εταιρείας
+- ASP.NET Core 8 Web API
+- PostgreSQL + Entity Framework Core
+- ASP.NET Core Identity
+- JWT access tokens + refresh tokens
+- Roles: SystemAdministrator, CompanyAdministrator, ServiceManager, Dispatcher, Technician, Warehouse, Customer
+- Companies CRUD
+- Customers CRUD
+- Audit fields and soft delete
+- Swagger with Bearer authentication
+- Serilog console/file logging
+- Health endpoint
+- Docker Compose
+- Automatic database creation and role/admin seeding
 
-## Τι χρειάζεται
+## Fastest start with Docker
 
-- Visual Studio 2022 Community με το workload **ASP.NET and web development**
-- .NET 8 SDK
-
-## Εκτέλεση
-
-1. Άνοιξε το `Atlas.sln`.
-2. Όρισε το `Atlas.Api` ως Startup Project.
-3. Πάτησε `F5`.
-4. Θα ανοίξει το Swagger στο `http://localhost:5080/swagger`.
-
-## Έλεγχος
-
-- `GET /health`
-- `GET /api`
-- `POST /api/companies`
-
-Παράδειγμα JSON:
-
-```json
-{
-  "name": "IT Connect",
-  "vatNumber": "123456789"
-}
+```bash
+docker compose up --build
 ```
 
-Σημείωση: Σε αυτή την έκδοση δεν υπάρχει ακόμη βάση δεδομένων. Το endpoint αποδεικνύει ότι το solution, το Domain και το API λειτουργούν σωστά.
+Swagger: http://localhost:8080/swagger
+Health: http://localhost:8080/health
+
+Default development administrator:
+
+- Email: admin@atlas.local
+- Password: Atlas.Admin.2026!
+
+Change this password before any non-local deployment.
+
+## Start from Visual Studio
+
+1. Install .NET 8 SDK and Docker Desktop/PostgreSQL.
+2. Open `Atlas.sln`.
+3. Set `Atlas.Api` as Startup Project.
+4. Start PostgreSQL: `docker compose up postgres -d`.
+5. Press F5.
+
+## First API test
+
+1. POST `/api/auth/login`
+2. Use the default admin credentials.
+3. Copy `accessToken`.
+4. Click **Authorize** in Swagger and enter `Bearer <token>`.
+5. Test `/api/companies` and `/api/customers`.
+
+## Security note
+
+Development secrets are deliberately easy to replace. Use environment variables or a secrets manager in production.
